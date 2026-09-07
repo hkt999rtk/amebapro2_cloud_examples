@@ -27,17 +27,23 @@ int example_network_start(void) {
     const rtk_ameba_firmware_config_t *config = &rtk_ameba_firmware_config;
 
     if (strcmp(config->wifi_security, "provisioned") == 0) {
+        int dhcp_started = 0;
         for (attempt = 1U; attempt <= RTK_EXAMPLE_WIFI_ATTEMPTS; ++attempt) {
             for (elapsed = 0U; elapsed < RTK_EXAMPLE_DHCP_TIMEOUT_MS;
                  elapsed += 250U) {
                 if (wifi_is_connected_to_ap() == RTW_SUCCESS) {
-                    if (!has_ipv4_address())
+                    /* Do not restart DHCP while waiting for a lease. */
+                    if (!has_ipv4_address() && !dhcp_started) {
+                        dhcp_started = 1;
                         (void)LwIP_DHCP(0, DHCP_START);
+                    }
                     if (has_ipv4_address()) {
                         printf("RTK_AMEBA_EXAMPLE_STAGE network=ready mode=provisioned attempt=%u\r\n",
                                attempt);
                         return 0;
                     }
+                } else {
+                    dhcp_started = 0;
                 }
                 vTaskDelay(pdMS_TO_TICKS(250U));
             }
@@ -116,6 +122,9 @@ int example_time_start(void) {
 
 void example_network_stop(void) {
     sntp_stop();
+    /* Provisioning owns the association: keep it available for application retries. */
+    if (strcmp(rtk_ameba_firmware_config.wifi_security, "provisioned") == 0)
+        return;
     (void)LwIP_DHCP(0, DHCP_STOP);
     (void)wifi_disconnect();
 }

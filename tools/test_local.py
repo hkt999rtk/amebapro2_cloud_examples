@@ -24,4 +24,5 @@ probe = subprocess.check_output(['ffprobe','-v','error','-select_streams','v:0',
 assert probe == '90', probe
 run(['python3',sdk/'tests/tools/test_generate_amebapro2_firmware_config.py'])
 run(['python3',root/'tests/test_certificate_time.py'])
+run(['python3',root/'tests/test_network.py'])
 print('LOCAL_TESTS_OK: timestamp wrap, three decoded loops (90 frames), SDK credential tests')

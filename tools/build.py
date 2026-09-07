@@ -33,6 +33,8 @@ def main():
     ap.add_argument('--sensor', default='SENSOR_GC2053')
     ap.add_argument('--jobs', type=int, default=4)
     ap.add_argument('--configure-only', action='store_true')
+    ap.add_argument('--build-root', type=Path, default=ROOT/'build')
+    ap.add_argument('--output-root', type=Path, default=ROOT/'output')
     a = ap.parse_args()
     if not a.sdk or not a.toolchain: ap.error('--sdk and --toolchain (or environment variables) are required')
     sdk, webrtc, tc, config = a.sdk.resolve(), a.webrtc.resolve(), a.toolchain.resolve(), a.config.resolve()
@@ -43,7 +45,7 @@ def main():
     newlib = run([tc/'arm-none-eabi-gcc','-E','-P','-x','c','-'], input='#include <_newlib_version.h>\n_NEWLIB_VERSION\n',capture_output=True,text=True).stdout.strip().strip('"')
     if version != '10.3.1' or newlib != '4.1.0': raise ValueError('requires GCC 10.3.1 / newlib 4.1.0')
     run([sys.executable,webrtc/'tools/verify_ameba_sdk_baseline.py','--sdk-root',sdk])
-    build = ROOT/'build'/a.example
+    build = a.build_root.resolve()/a.example
     generated = build/'generated'
     generated.mkdir(parents=True,exist_ok=True)
     # DEVELOPMENT ONLY: generate plaintext credential arrays for simple testing.
@@ -90,7 +92,7 @@ def main():
             if '/ARM_CM33_NTZ/non_secure/port.c' not in link_map or '/ARM_CM4F/' in link_map:
                 raise ValueError('incorrect FreeRTOS ARM port')
             run([tc/'arm-none-eabi-size',elf])
-            output = ROOT/'output'
+            output = a.output_root.resolve()
             output.mkdir(mode=0o700,exist_ok=True)
             image = output/f'amebapro2_{a.example}_flash_ntz.bin'
             shutil.copy2(build/'flash_ntz.bin',image)
