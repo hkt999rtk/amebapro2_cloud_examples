@@ -177,3 +177,9 @@ To reproduce compile-only validation without cloud credentials, run
 use reserved `.test` endpoints and cannot authenticate to the real cloud.
 
 See [validation results](docs/validation.md) and [board checklist](docs/hardware-checklist.md).
+
+## Developer Website release
+
+The canonical website/offline guide is `docs/developer/protwo-cloud-examples.en.md`.
+Website evaluation images use isolated test credentials only and cannot reach your Cloud.
+Never publish an image built with user credentials. Release packaging builds fresh isolated inputs.
