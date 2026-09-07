@@ -1,0 +1,14 @@
+{
+  "amebapro2_sdk": {
+    "version": "9.6e",
+    "baseline_commit": "7e7840301f2cd0fccd3e710be299b14a4c9f4c2f"
+  },
+  "rtk_ameba_webrtc": {
+    "url": "git@github-work.com:hkt999rtk/rtk_ameba_webrtc.git",
+    "commit": "cfc095585abebb05dda85427872ab8f5ee801a73"
+  },
+  "toolchain": {
+    "gcc": "10.3.1",
+    "newlib": "4.1.0"
+  }
+}

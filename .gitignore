@@ -8,3 +8,6 @@
 *.key
 .DS_Store
 __pycache__/
+*.crt
+*.p12
+*.pfx

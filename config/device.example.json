@@ -1,0 +1,18 @@
+{
+  "wifi_ssid": "replace-with-development-ssid",
+  "wifi_password": "replace-with-development-password",
+  "wifi_security": "wpa2-aes",
+  "device_id": "replace-with-device-id",
+  "token_url": "https://cloud.example.test/api/device-token",
+  "cloud_base_url": "https://cloud.example.test",
+  "mqtt_broker_host": "mqtt.example.test",
+  "mqtt_broker_port": 8883,
+  "mqtt_command_topic": "devices/replace-with-device-id/down/commands",
+  "mqtt_presence_topic": "devices/replace-with-device-id/up/messages",
+  "mqtt_tenant_topic_prefix": "_bc",
+  "device_certificate_chain_pem": "/absolute/path/to/device-chain.pem",
+  "device_private_key_pem": "/absolute/path/to/device-private-key.pem",
+  "https_server_ca_pem": "/absolute/path/to/https-ca.pem",
+  "mqtt_server_ca_pem": "/absolute/path/to/mqtt-ca.pem",
+  "force_relay": false
+}
