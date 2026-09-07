@@ -1,0 +1,10 @@
+/build/
+/output/
+/local/
+/.secrets/
+*.local.json
+*.local.env
+*.pem
+*.key
+.DS_Store
+__pycache__/
