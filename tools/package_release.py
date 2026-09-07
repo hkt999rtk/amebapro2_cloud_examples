@@ -32,7 +32,9 @@ def main():
   for n in t.getnames():
    rel=Path(n).parts[1:]
    if any(x in {'local','build','output','.secrets'} for x in rel) or n.endswith(('.pem','.key','.p12','.pfx','.local.json')):raise ValueError('sensitive path in archive')
- artifact('source',source,'source');examples=[]
+ artifact('source',source,'source')
+ notes=out/'release-notes.md';notes.write_text((ROOT/'docs/RELEASE_NOTES.md').read_text());artifact('release-notes',notes,'documentation')
+ examples=[]
  for id,(title,desc) in EXAMPLES.items():
   with (work/f'{id}.log').open('w') as log:
    run(['python3',ROOT/'tools/build.py',id,'--config',config,'--sdk',a.sdk,'--webrtc',a.webrtc,'--toolchain',a.toolchain,'--build-root',work/'firmware','--output-root',out],stdout=log,stderr=subprocess.STDOUT)
