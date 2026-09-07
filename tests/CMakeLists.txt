@@ -1,0 +1,30 @@
+cmake_minimum_required(VERSION 3.20)
+project(cloud_examples_tests C CXX)
+set(RTK_NATIVE_PEER_ENGINE libdatachannel CACHE STRING "" FORCE)
+set(RTK_BUILD_TESTS ON CACHE BOOL "" FORCE)
+set(RTK_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+if(NOT RTK_AMEBA_WEBRTC_ROOT)
+  get_filename_component(RTK_AMEBA_WEBRTC_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../../rtk_ameba_webrtc" ABSOLUTE)
+endif()
+enable_testing()
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(CJSON REQUIRED IMPORTED_TARGET libcjson)
+add_subdirectory("${RTK_AMEBA_WEBRTC_ROOT}" sdk)
+add_executable(example_video_endpoint video_endpoint.cpp ../assets/test_video.c
+  "${RTK_AMEBA_WEBRTC_ROOT}/platform/amebapro2/src/rtk_ameba_libdatachannel.cpp")
+target_include_directories(example_video_endpoint PRIVATE ../common ../assets
+  "${RTK_AMEBA_WEBRTC_ROOT}/platform/amebapro2/include")
+target_compile_features(example_video_endpoint PRIVATE cxx_std_17)
+target_link_libraries(example_video_endpoint PRIVATE LibDataChannel::LibDataChannelStatic PkgConfig::CJSON)
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+foreach(mode direct turn_udp)
+  set(turn_args)
+  if(mode STREQUAL "turn_udp")
+    list(APPEND turn_args --turn-server $<TARGET_FILE:rtk_local_turn_server>)
+  endif()
+  add_test(NAME example.fixture_${mode} COMMAND ${Python3_EXECUTABLE}
+    "${RTK_AMEBA_WEBRTC_ROOT}/tests/native/run_ameba_pion_e2e.py"
+    --device $<TARGET_FILE:example_video_endpoint>
+    --go-root "${RTK_AMEBA_WEBRTC_ROOT}/packages/golang" ${turn_args})
+  set_tests_properties(example.fixture_${mode} PROPERTIES TIMEOUT 90)
+endforeach()
